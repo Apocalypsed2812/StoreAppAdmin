@@ -1,0 +1,30 @@
+@import 'normalize.css';
+
+:root {
+    --primary-color: #1a94ff;
+    --black-color: #000;
+    --white-color: #fff;
+    --text-color: #161823;
+    --price-color: rgb(255, 66, 78);
+
+    // Default layout
+    --default-layout-header-height: 100px;
+    --default-layout-width: 1240px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+button,
+input {
+    outline: none;
+    border: none;
+}
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
+}

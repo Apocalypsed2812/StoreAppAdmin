@@ -1,0 +1,72 @@
+.footer {
+    border-top: 1px solid var(--primary-color);
+    padding: 20px 0 40px 0;
+}
+
+// .grid {
+//     width: 100%;
+//     display: block;
+//     padding: 0;
+// }
+
+// .grid.wide {
+//     max-width: 1200px;
+//     margin: 0 auto;
+// }
+
+// .row {
+//     display: flex;
+//     flex-wrap: wrap;
+//     margin-left: -4px;
+//     margin-right: -4px;
+// }
+
+// .col {
+//     padding-left: 4px;
+//     padding-right: 4px;
+// }
+
+// .l-2-4 {
+//     flex: 0 0 20%;
+//     max-width: 20%;
+// }
+
+.heading {
+    margin-bottom: 8px;
+}
+
+.list {
+    list-style: none;
+}
+
+.item {
+    .item-link {
+        display: block;
+        color: rgb(128, 128, 137);
+        margin-bottom: 8px;
+
+        .item-link-social {
+            margin-right: 4px;
+        }
+    }
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+.download {
+    display: flex;
+    align-items: center;
+
+    .download-qr {
+        width: 30%;
+    }
+
+    .download-apps {
+        .download-app-img {
+            width: 65%;
+            margin-left: 10px;
+        }
+    }
+}
