@@ -10,19 +10,19 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { storage } from '~/firebase.js';
-import styles from './Category.module.scss';
+import styles from './User.module.scss';
 import app from '~/firebase.js';
 
 const cx = classNames.bind(styles);
 
-function Category() {
+function User() {
     //Lấy dữ liệu từ firebase
     const dbRef = ref(getDatabase());
     const [category, setCategory] = useState([]);
     const [categoryId, setCategoryId] = useState(1);
     //const imageListRef = refStorage(storage, 'images/');
-    const loadCategory = () => {
-        get(child(dbRef, `categorys`))
+    const loadUser = () => {
+        get(child(dbRef, `users`))
             .then((snapshot) => {
                 if (snapshot.exists()) {
                     if (snapshot.val().length > 0) {
@@ -39,7 +39,7 @@ function Category() {
             });
     };
     useEffect(() => {
-        loadCategory();
+        loadUser();
     }, [dbRef]);
 
     const [showAdd, setShowAdd] = useState(false);
@@ -47,6 +47,8 @@ function Category() {
     const [showEdit, setShowEdit] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
 
@@ -62,6 +64,8 @@ function Category() {
 
     const handleShowView = (e) => {
         setName(e.target.getAttribute('data-name'));
+        setPhone(e.target.getAttribute('data-phone'));
+        setEmail(e.target.getAttribute('data-email'));
         setShowView(true);
     };
 
@@ -86,7 +90,7 @@ function Category() {
 
     //Thêm dữ liệu vào firebase
     const handleAddCategory = () => {
-        set(child(dbRef, `categorys/` + categoryId), {
+        set(child(dbRef, `users/` + categoryId), {
             id: parseInt(categoryId),
             name: name,
         })
@@ -94,7 +98,6 @@ function Category() {
                 toast.success('Add Category Successfully !', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
-                loadCategory();
             })
             .catch((error) => {
                 toast.error('Has occured error !', {
@@ -107,7 +110,7 @@ function Category() {
     //Sửa dữ liệu firebase
     const handleEditCategory = (e) => {
         console.log(idEdit);
-        set(child(dbRef, `categorys/` + idEdit), {
+        set(child(dbRef, `users/` + idEdit), {
             id: parseInt(idEdit),
             name: name,
         })
@@ -115,7 +118,6 @@ function Category() {
                 toast.success('Edit Category Successfully !', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
-                loadCategory();
             })
             .catch((error) => {
                 toast.error('Has occured error !', {
@@ -127,12 +129,11 @@ function Category() {
 
     //Xóa dữ liệu firebase
     const handleDeleteCategory = (e) => {
-        remove(child(dbRef, `categorys/` + idDelete))
+        remove(child(dbRef, `users/` + idDelete))
             .then(() => {
                 toast.success('Delete Category Successfully !', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
-                loadCategory();
             })
             .catch((error) => {
                 toast.error('Has occured error !', {
@@ -145,17 +146,19 @@ function Category() {
     return (
         <>
             <div className={cx('container')}>
-                <h2 className={cx('text-center', 'text-primary', 'pt-5')}>Quản lý danh mục</h2>
+                <h2 className={cx('text-center', 'text-success', 'pt-5', 'mb-5')}>Quản lý người dùng</h2>
                 <div>
-                    <Link to="" className={cx('btn', 'btn-danger', 'mb-3', 'text-light')} onClick={handleShowAdd}>
+                    {/* <Link to="" className={cx('btn', 'btn-danger', 'mb-3', 'text-light')} onClick={handleShowAdd}>
                         Thêm danh mục +
-                    </Link>
+                    </Link> */}
                     <table cellPadding="10" cellSpacing="10" border="0" className={cx('table', 'table-striped')}>
                         <thead className={cx('text-center')}>
                             <tr>
                                 <td></td>
                                 <td>Mã</td>
                                 <td>Tên</td>
+                                <td>SDT</td>
+                                <td>Email</td>
                             </tr>
                         </thead>
                         <tbody className={cx('text-center')}>
@@ -168,6 +171,8 @@ function Category() {
                                             onClick={handleShowView}
                                             data-name={item.name}
                                             data-id={item.id}
+                                            data-email={item.email}
+                                            data-phone={item.phone}
                                         >
                                             {/* <FontAwesomeIcon icon={faEye} /> */}
                                             Xem
@@ -179,6 +184,8 @@ function Category() {
                                             onClick={handleShowEdit}
                                             data-id={item.id}
                                             data-name={item.name}
+                                            data-email={item.email}
+                                            data-phone={item.phone}
                                         >
                                             {/* <FontAwesomeIcon icon={faPen} /> */}
                                             Sửa
@@ -189,6 +196,8 @@ function Category() {
                                             onClick={handleShowDelete}
                                             data-id={item.id}
                                             data-name={item.name}
+                                            data-email={item.email}
+                                            data-phone={item.phone}
                                         >
                                             {/* <FontAwesomeIcon icon={faTrashAlt} /> */}
                                             Xóa
@@ -196,6 +205,8 @@ function Category() {
                                     </td>
                                     <td>{item.id}</td>
                                     <td>{item.name}</td>
+                                    <td>{item.phone}</td>
+                                    <td>{item.email}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -203,7 +214,7 @@ function Category() {
                     <ToastContainer />
                 </div>
             </div>
-            <Modal show={showAdd} onHide={handleCloseAdd}>
+            {/* <Modal show={showAdd} onHide={handleCloseAdd}>
                 <Modal.Header closeButton>
                     <Modal.Title>Thêm Danh Mục</Modal.Title>
                 </Modal.Header>
@@ -227,19 +238,33 @@ function Category() {
                         Add
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal> */}
 
             <Modal show={showView} onHide={handleCloseView}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xem Danh Mục</Modal.Title>
+                    <Modal.Title>Xem Người Dùng</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
                         <input
-                            className={cx('form-control')}
+                            className={cx('form-control', 'mb-3')}
                             name="name"
                             placeholder="Nhập tên món ăn"
                             value={name}
+                            readOnly
+                        />
+                        <input
+                            className={cx('form-control', 'mb-3')}
+                            name="name"
+                            placeholder="Nhập tên món ăn"
+                            value={phone}
+                            readOnly
+                        />
+                        <input
+                            className={cx('form-control', 'mb-3')}
+                            name="name"
+                            placeholder="Nhập tên món ăn"
+                            value={email}
                             readOnly
                         />
                     </div>
@@ -279,12 +304,12 @@ function Category() {
 
             <Modal show={showDelete} onHide={handleCloseDelete}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xóa Danh Mục</Modal.Title>
+                    <Modal.Title>Xóa Người Dùng</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
                         <p>
-                            Bạn có chắc là muốn xóa danh mục <b>{name}</b> không ?
+                            Bạn có chắc là muốn xóa nguời dùng <b>{name}</b> không ?
                         </p>
                     </div>
                 </Modal.Body>
@@ -301,4 +326,4 @@ function Category() {
     );
 }
 
-export default Category;
+export default User;

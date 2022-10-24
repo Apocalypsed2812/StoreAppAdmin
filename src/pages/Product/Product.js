@@ -12,26 +12,27 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { storage } from '~/firebase.js';
+import styles from './Product.module.scss';
 import app from '~/firebase.js';
 // import UploadImage from '~/utils/uploadImage';
 
-import styles from './Order.module.scss';
-
 const cx = classNames.bind(styles);
 
-function Order() {
+function Product() {
     //Lấy dữ liệu từ firebase
     const dbRef = ref(getDatabase());
-    const [shipper, setShipper] = useState([]);
-    const [shipperId, setShipperId] = useState(1);
-    useEffect(() => {
-        get(child(dbRef, `orders`))
+    const [product, setProduct] = useState([]);
+    const [categoryList, setCategoryList] = useState([]);
+    const [productId, setProductId] = useState(1);
+    //const imageListRef = refStorage(storage, 'images/');
+    const loadProduct = () => {
+        get(child(dbRef, `products`))
             .then((snapshot) => {
                 if (snapshot.exists()) {
                     if (snapshot.val().length > 0) {
                         console.log(snapshot.val());
-                        setShipper(snapshot.val());
-                        setShipperId(snapshot.val()[snapshot.val().length - 1].id + 1);
+                        setProduct(snapshot.val());
+                        setProductId(snapshot.val()[snapshot.val().length - 1].id + 1);
                     }
                 } else {
                     console.log('No data available');
@@ -40,25 +41,60 @@ function Order() {
             .catch((error) => {
                 console.error(error);
             });
-    }, []);
+    };
+
+    const loadCategory = () => {
+        get(child(dbRef, `categorys`))
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    if (snapshot.val().length > 0) {
+                        console.log(snapshot.val());
+                        setCategoryList(snapshot.val());
+                    }
+                } else {
+                    console.log('No data available');
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+    useEffect(() => {
+        loadProduct();
+        loadCategory();
+        // listAll(imageListRef).then((res) => {
+        //     res.items.forEach((item) => {
+        //         getDownloadURL(item).then((url) => {
+        //             console.log(url);
+        //         });
+        //     });
+        //     getDownloadURL(res.items).then((url) => {
+        //         console.log(url);
+        //     });
+        // });
+    }, [dbRef]);
 
     const [showAdd, setShowAdd] = useState(false);
     const [showView, setShowView] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [name, setName] = useState('');
-    const [username, setUsername] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
+    const [price, setPrice] = useState('');
+    const [quantity, setQuantity] = useState('');
+    const [category, setCategory] = useState('');
+    const [image, setImage] = useState('');
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
+    let btnEditConfirm = useRef();
 
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => {
         setName('');
-        setUsername('');
-        setPhone('');
-        setAddress('');
+        setPrice('');
+        setQuantity('');
+        setCategory('');
+        setImage('');
+        loadCategory();
         setShowAdd(true);
     };
 
@@ -68,17 +104,19 @@ function Order() {
 
     const handleShowView = (e) => {
         setName(e.target.getAttribute('data-name'));
-        setUsername(e.target.getAttribute('data-username'));
-        setPhone(e.target.getAttribute('data-phone'));
-        setAddress(e.target.getAttribute('data-address'));
+        setPrice(e.target.getAttribute('data-price'));
+        setQuantity(e.target.getAttribute('data-quantity'));
+        setCategory(e.target.getAttribute('data-category'));
         setShowView(true);
     };
 
     const handleShowEdit = (e) => {
+        loadCategory();
         setName(e.target.getAttribute('data-name'));
-        setUsername(e.target.getAttribute('data-username'));
-        setPhone(e.target.getAttribute('data-phone'));
-        setAddress(e.target.getAttribute('data-address'));
+        setPrice(e.target.getAttribute('data-price'));
+        setQuantity(e.target.getAttribute('data-quantity'));
+        setCategory(e.target.getAttribute('data-category'));
+        setImage(e.target.getAttribute('data-image'));
         setIdEdit(e.target.getAttribute('data-id'));
         setShowEdit(true);
     };
@@ -86,100 +124,119 @@ function Order() {
     const handleShowDelete = (e) => {
         console.log(e.target.getAttribute('data-id'));
         setIdDelete(e.target.getAttribute('data-id'));
+        setName(e.target.getAttribute('data-name'));
         console.log(idDelete);
         setShowDelete(true);
     };
 
     //Set dữ liệu cho input
-    const setNameShipper = (e) => {
+    const setNameProduct = (e) => {
         setName(e.target.value);
     };
 
-    const setPhoneShipper = (e) => {
-        setPhone(e.target.value);
+    const setPriceProduct = (e) => {
+        setPrice(e.target.value);
     };
 
-    const setAddressShipper = (e) => {
-        setAddress(e.target.value);
+    const setQuantityProduct = (e) => {
+        setQuantity(e.target.value);
     };
 
-    const setUsernameShipper = (e) => {
-        setUsername(e.target.value);
+    const setCategoryProduct = (e) => {
+        setCategory(e.target.value);
+    };
+
+    const setImageProduct = (e) => {
+        // let path = e.target.value;
+        // let imageName = path.split('\\')[2];
+        console.log(e.target.files[0]);
+        setImage(e.target.files[0]);
     };
 
     //Thêm dữ liệu vào firebase
-    const handleAddShipper = () => {
-        set(child(dbRef, `orders/` + shipperId), {
-            id: shipperId,
-            name: name,
-            username: username,
-            phone: phone,
-            address: address,
-            password: '123456789',
-        })
-            .then(() => {
-                toast.success('Add Shipper Successfully !', {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-            })
-            .catch((error) => {
-                toast.error('Has occured error !', {
-                    position: toast.POSITION.TOP_RIGHT,
+    const handleAddProduct = () => {
+        if (image == null) return;
+        if (category === '') {
+            toast.error('Vui lòng chọn loại món ăn !', {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+            return;
+        }
+        const imageRef = refStorage(storage, `images/${image.name}`);
+        uploadBytes(imageRef, image).then(() => {
+            getDownloadURL(imageRef).then((url) => {
+                console.log(url);
+                set(child(dbRef, `products/` + productId), {
+                    id: productId,
+                    name: name,
+                    price: price,
+                    quantity: quantity,
+                    category: category,
+                    image: url,
+                }).then(() => {
+                    setShowAdd(false);
+                    toast.success('Add Product Successfully !', {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                    loadProduct();
                 });
             });
-        setShowAdd(false);
+        });
     };
 
     //Sửa dữ liệu firebase
-    const handleEditShipper = (e) => {
+    const handleEditProduct = (e) => {
         console.log(idEdit);
-        set(child(dbRef, `orders/` + idEdit), {
+        set(child(dbRef, `products/` + idEdit), {
             id: parseInt(idEdit),
             name: name,
-            username: username,
-            phone: phone,
-            address: address,
+            price: price,
+            quantity: quantity,
+            category: category,
+            image: image,
         })
             .then(() => {
-                toast.success('Edit Shipper Successfully !', {
+                toast.success('Edit Product Successfully !', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
+                loadProduct();
+                setShowEdit(false);
             })
             .catch((error) => {
                 toast.error('Has occured error !', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
             });
-        setShowEdit(false);
     };
 
     //Xóa dữ liệu firebase
-    const handleDeleteShipper = (e) => {
-        remove(child(dbRef, `orders/` + idDelete))
+    const handleDeleteProduct = (e) => {
+        remove(child(dbRef, `products/` + idDelete))
             .then(() => {
-                toast.success('Delete Shipper Successfully !', {
+                toast.success('Delete Product Successfully !', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
+                loadProduct();
+                setShowDelete(false);
             })
             .catch((error) => {
                 toast.error('Has occured error !', {
                     position: toast.POSITION.TOP_RIGHT,
                 });
             });
-        setShowDelete(false);
     };
 
     return (
         <>
             <div className={cx('container')}>
-                <h2 className={cx('text-center', 'text-danger', 'pt-5')}>Quản lý đơn hàng</h2>
+                <h2 className={cx('text-center', 'text-danger', 'pt-5')}>Quản lý món ăn</h2>
                 <div>
                     <Link
                         to=""
                         className={cx('btn', 'btn-primary', 'mb-3', 'ml-5', 'text-light')}
                         onClick={handleShowAdd}
                     >
-                        Thêm người giao hàng +
+                        Thêm món ăn +
                     </Link>
                     <table cellPadding="10" cellSpacing="10" border="0" className={cx('table', 'table-striped')}>
                         <thead className={cx('text-center')}>
@@ -192,7 +249,7 @@ function Order() {
                             </tr>
                         </thead>
                         <tbody className={cx('text-center')}>
-                            {shipper.map((item, index) => (
+                            {product.map((item, index) => (
                                 <tr key={index}>
                                     <td>
                                         <Link
@@ -250,25 +307,15 @@ function Order() {
 
             <Modal show={showAdd} onHide={handleCloseAdd}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Thêm Người Giao Hàng</Modal.Title>
+                    <Modal.Title>Thêm Món Ăn</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
-                            name="category"
-                            placeholder="Nhập username"
-                            onChange={setUsernameShipper}
-                            value={username}
-                            required
-                        />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
                             name="name"
-                            placeholder="Nhập tên người giao hàng"
-                            onChange={setNameShipper}
+                            placeholder="Nhập tên món ăn"
+                            onChange={setNameProduct}
                             value={name}
                             required
                         />
@@ -277,9 +324,9 @@ function Order() {
                         <input
                             className={cx('form-control')}
                             name="price"
-                            placeholder="Nhập số điện thoại"
-                            onChange={setPhoneShipper}
-                            value={phone}
+                            placeholder="Nhập giá món ăn"
+                            onChange={setPriceProduct}
+                            value={price}
                             required
                         />
                     </div>
@@ -287,10 +334,35 @@ function Order() {
                         <input
                             className={cx('form-control')}
                             name="quantity"
-                            placeholder="Nhập địa chỉ người giao hàng"
-                            onChange={setAddressShipper}
-                            value={address}
+                            placeholder="Nhập số lượng món ăn"
+                            onChange={setQuantityProduct}
+                            value={quantity}
                             required
+                        />
+                    </div>
+                    <div className={cx('form-group')}>
+                        <select
+                            className={cx('form-control')}
+                            name="category"
+                            // placeholder="Nhập loại món ăn"
+                            onChange={setCategoryProduct}
+                            required
+                        >
+                            <option value="">Vui Lòng Chọn Loại Món Ăn</option>
+                            {categoryList.map((item, index) => (
+                                <option value={item.name} key={item.id}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className={cx('form-group')}>
+                        <input
+                            type="file"
+                            className={cx('form-control')}
+                            required
+                            name="image"
+                            onChange={setImageProduct}
                         />
                     </div>
                 </Modal.Body>
@@ -298,7 +370,7 @@ function Order() {
                     <Button variant="secondary" onClick={handleCloseAdd}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleAddShipper}>
+                    <Button variant="primary" onClick={handleAddProduct}>
                         Add
                     </Button>
                 </Modal.Footer>
@@ -306,7 +378,7 @@ function Order() {
 
             <Modal show={showView} onHide={handleCloseView}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xem Thông Tin Người Giao Hàng</Modal.Title>
+                    <Modal.Title>Xem Món Ăn</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
@@ -314,7 +386,7 @@ function Order() {
                             className={cx('form-control')}
                             name="name"
                             placeholder="Nhập tên món ăn"
-                            value={username}
+                            value={name}
                             readOnly
                         />
                     </div>
@@ -323,7 +395,7 @@ function Order() {
                             className={cx('form-control')}
                             name="price"
                             placeholder="Nhập giá món ăn"
-                            value={name}
+                            value={price}
                             readOnly
                         />
                     </div>
@@ -332,7 +404,7 @@ function Order() {
                             className={cx('form-control')}
                             name="quantity"
                             placeholder="Nhập số lượng món ăn"
-                            value={phone}
+                            value={quantity}
                             readOnly
                         />
                     </div>
@@ -341,7 +413,7 @@ function Order() {
                             className={cx('form-control')}
                             name="category"
                             placeholder="Nhập loại món ăn"
-                            value={address}
+                            value={category}
                             readOnly
                         />
                     </div>
@@ -355,25 +427,15 @@ function Order() {
 
             <Modal show={showEdit} onHide={handleCloseEdit}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Sửa Người Giao Hàng</Modal.Title>
+                    <Modal.Title>Sửa Món Ăn</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
-                            name="quantity"
-                            placeholder="Nhập số lượng món ăn"
-                            onChange={setUsernameShipper}
-                            value={username}
-                            required
-                        />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
                             name="name"
                             placeholder="Nhập tên món ăn"
-                            onChange={setNameShipper}
+                            onChange={setNameProduct}
                             value={name}
                             required
                         />
@@ -383,27 +445,48 @@ function Order() {
                             className={cx('form-control')}
                             name="price"
                             placeholder="Nhập giá món ăn"
-                            onChange={setPhoneShipper}
-                            value={phone}
+                            onChange={setPriceProduct}
+                            value={price}
                             required
                         />
                     </div>
                     <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
-                            name="category"
-                            placeholder="Nhập loại món ăn"
-                            onChange={setAddressShipper}
-                            value={address}
+                            name="quantity"
+                            placeholder="Nhập số lượng món ăn"
+                            onChange={setQuantityProduct}
+                            value={quantity}
                             required
                         />
+                    </div>
+                    <div className={cx('form-group')}>
+                        <select
+                            className={cx('form-control')}
+                            name="category"
+                            // placeholder="Nhập loại món ăn"
+                            onChange={setCategoryProduct}
+                            required
+                        >
+                            <option value={category}>{category}</option>
+                            {categoryList.forEach((item, index) => {
+                                if (item.name === category) {
+                                    categoryList.splice(index, 1);
+                                }
+                            })}
+                            {categoryList.map((item, index) => (
+                                <option value={item.name} key={index}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseEdit}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleEditShipper}>
+                    <Button ref={btnEditConfirm} variant="primary" onClick={handleEditProduct}>
                         Edit
                     </Button>
                 </Modal.Footer>
@@ -411,18 +494,20 @@ function Order() {
 
             <Modal show={showDelete} onHide={handleCloseDelete}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xóa Người Giao Hàng</Modal.Title>
+                    <Modal.Title>Xóa Món Ăn</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
-                        <p>Bạn có chắc là muốn xóa người giao hàng này không ?</p>
+                        <p>
+                            Bạn có chắc là muốn xóa món ăn <b>{name}</b> không ?
+                        </p>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseEdit}>
                         Close
                     </Button>
-                    <Button variant="danger" onClick={handleDeleteShipper}>
+                    <Button ref={btnEditConfirm} variant="danger" onClick={handleDeleteProduct}>
                         Delete
                     </Button>
                 </Modal.Footer>
@@ -431,4 +516,4 @@ function Order() {
     );
 }
 
-export default Order;
+export default Product;
