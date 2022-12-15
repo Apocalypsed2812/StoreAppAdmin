@@ -55,27 +55,39 @@ function Sidebar() {
                             <input type="search" placeholder="Search..." />
                         </li>
                         <li>
-                            <Link to="/foodstore">
+                            <Link to="/">
                                 <FontAwesomeIcon icon={faHome} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Trang Chủ</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/foodstore/food">
+                            <Link to="/food">
                                 <FontAwesomeIcon icon={faBowlFood} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Món Ăn</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/foodstore/category">
+                            <Link to="/category">
                                 <FontAwesomeIcon icon={faBars} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Danh mục</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/foodstore/order">
+                            <Link to="/order">
                                 <FontAwesomeIcon icon={faMoneyBill} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Đơn hàng</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/foodstore">
+                                <FontAwesomeIcon icon={faStore} className={cx('icon')} />
+                                <span className={cx('text', 'nav-text')}>Quán Ăn</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/user">
+                                <FontAwesomeIcon icon={faMoneyBill} className={cx('icon')} />
+                                <span className={cx('text', 'nav-text')}>Người dùng</span>
                             </Link>
                         </li>
                     </ul>

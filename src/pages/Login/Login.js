@@ -36,10 +36,9 @@ function Login() {
                     if (response.user.role === 'admin') {
                         setIsLogin(true);
                         setIsAdmin(true);
-                        navigate('/admin');
+                        navigate('/');
                     } else {
-                        setIsLogin(true);
-                        navigate('/foodstore');
+                        
                     }
                 } else {
                     Swal.fire({

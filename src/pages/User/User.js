@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faUser } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
@@ -8,15 +8,15 @@ import { useState, useEffect, useContext } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import styles from './Order.module.scss';
+import styles from './User.module.scss';
 import { postMethod } from '~/utils/fetchData';
 import { GlobalState } from '~/context/GlobalState';
 
 const cx = classNames.bind(styles);
 
-function Order() {
+function User() {
     const state = useContext(GlobalState);
-    const [foodStores, setFoodStores] = state.FoodStoreAPI.foodStores;
+    const [userList, setUserList] = state.UserListAPI.userList;
     const [isAdmin, setIsAdmin] = state.UserAPI.admin;
 
     console.log(isAdmin);
@@ -28,7 +28,7 @@ function Order() {
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
+    const [email, setEmail] = useState('');
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
 
@@ -44,7 +44,7 @@ function Order() {
         setName('');
         setUsername('');
         setPhone('');
-        setAddress('');
+        setEmail('');
         setShowAdd(true);
     };
 
@@ -56,7 +56,7 @@ function Order() {
         setName(e.target.getAttribute('data-name'));
         setUsername(e.target.getAttribute('data-username'));
         setPhone(e.target.getAttribute('data-phone'));
-        setAddress(e.target.getAttribute('data-address'));
+        setEmail(e.target.getAttribute('data-email'));
         setShowView(true);
     };
 
@@ -64,7 +64,7 @@ function Order() {
         setName(e.target.getAttribute('data-name'));
         setUsername(e.target.getAttribute('data-username'));
         setPhone(e.target.getAttribute('data-phone'));
-        setAddress(e.target.getAttribute('data-address'));
+        // setAddress(e.target.getAttribute('data-address'));
         setIdEdit(e.target.getAttribute('data-id'));
         setShowEdit(true);
     };
@@ -85,9 +85,9 @@ function Order() {
         setPhone(e.target.value);
     };
 
-    const setAddressShipper = (e) => {
-        setAddress(e.target.value);
-    };
+    // const setAddressShipper = (e) => {
+    //     setAddress(e.target.value);
+    // };
 
     const setUsernameShipper = (e) => {
         setUsername(e.target.value);
@@ -107,8 +107,8 @@ function Order() {
             <div className={cx('dashboard')}>
                 <div className={cx('top')}>
                     <div>
-                        <FontAwesomeIcon icon={faMoneyBill} className={cx('icon', 'mr-8')} />
-                        <span>Order</span>
+                        <FontAwesomeIcon icon={faUser} className={cx('icon', 'mr-8')} />
+                        <span>User</span>
                     </div>
                     <div className={cx('dashboard-search-box')}>
                         <FontAwesomeIcon icon={faSearch} className={cx('icon')} />
@@ -119,37 +119,33 @@ function Order() {
                 <div className={cx('dash-content')}>
                     <div className={cx('activity')}>
                         <div className={cx('title')}>
-                            <FontAwesomeIcon icon={faMoneyBill} className={cx('icon', 'mt-16')} />
-                            <span className={cx('text', 'mt-16')}>Manage Order</span>
+                            <FontAwesomeIcon icon={faUser} className={cx('icon', 'mt-16')} />
+                            <span className={cx('text', 'mt-16')}>Manage User</span>
                         </div>
                         <table className={cx('table')}>
                             <thead>
                                 <tr>
-                                    <td>Ảnh</td>
+                                    <td>Username</td>
                                     <td>Tên</td>
-                                    <td>Giá</td>
-                                    <td>Số lượng</td>
+                                    <td>Số điện thoại</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* {order.map((item, index) => (
+                                {userList.map((item, index) => (
                                     <tr className={cx('table-item')} key={index}>
-                                        <td>
-                                            <img src={item.image} alt="" className={cx('home-img')} />
-                                        </td>
+                                        <td>{item.username}</td>
                                         <td>{item.name}</td>
-                                        <td>{item.price}</td>
-                                        <td>{item.quantity}</td>
+                                        <td>{item.phone}</td>
                                         <td>
                                             <Link
                                                 to=""
                                                 className={cx('ml-8')}
                                                 onClick={handleShowView}
                                                 data-name={item.name}
-                                                data-price={item.price}
-                                                data-quantity={item.quantity}
-                                                data-category={item.category}
+                                                data-username={item.username}
+                                                data-phone={item.phone}
+                                                data-email={item.email}
                                             >
                                                 Xem
                                             </Link>
@@ -160,10 +156,9 @@ function Order() {
                                                 // onClick={handleShowEdit}
                                                 // data-id={item.id}
                                                 // data-name={item.name}
-                                                // data-price={item.price}
-                                                // data-quantity={item.quantity}
-                                                // data-category={item.category}
-                                                // data-image={item.image}
+                                                // data-username={item.username}
+                                                // data-phone={item.phone}
+                                                // data-email={item.category}
                                             >
                                                 Sửa
                                             </Link>
@@ -178,24 +173,23 @@ function Order() {
                                             </Link>
                                         </td>
                                     </tr>
-                                ))} */}
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            {/* <Modal show={showView} onHide={handleCloseView}>
+            <Modal show={showView} onHide={handleCloseView}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xem Món Ăn</Modal.Title>
+                    <Modal.Title>Xem Người Dùng</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
                             name="name"
-                            placeholder="Nhập tên món ăn"
-                            value={name}
+                            value={username}
                             readOnly
                         />
                     </div>
@@ -203,8 +197,7 @@ function Order() {
                         <input
                             className={cx('form-control')}
                             name="price"
-                            placeholder="Nhập giá món ăn"
-                            value={price}
+                            value={name}
                             readOnly
                         />
                     </div>
@@ -212,8 +205,7 @@ function Order() {
                         <input
                             className={cx('form-control')}
                             name="quantity"
-                            placeholder="Nhập số lượng món ăn"
-                            value={quantity}
+                            value={phone}
                             readOnly
                         />
                     </div>
@@ -221,8 +213,7 @@ function Order() {
                         <input
                             className={cx('form-control')}
                             name="category"
-                            placeholder="Nhập loại món ăn"
-                            value={category}
+                            value={email}
                             readOnly
                         />
                     </div>
@@ -232,7 +223,7 @@ function Order() {
                         Close
                     </Button>
                 </Modal.Footer>
-            </Modal> */}
+            </Modal>
 
             {/* <Modal show={showAdd} onHide={handleCloseAdd}>
                 <Modal.Header closeButton>
@@ -308,4 +299,4 @@ function Order() {
     );
 }
 
-export default Order;
+export default User;

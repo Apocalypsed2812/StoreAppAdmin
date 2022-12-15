@@ -9,18 +9,17 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import styles from './Order.module.scss';
-import { GlobalState } from '~/context/GlobalState';
 import { postMethod } from '~/utils/fetchData';
+import { GlobalState } from '~/context/GlobalState';
 
 const cx = classNames.bind(styles);
 
 function Order() {
-    //Lấy dữ liệu từ firebase
-    const [order, setOrder] = useState([]);
     const state = useContext(GlobalState);
-    const navigate = useNavigate();
-    const [category, setCategory] = state.CategoryAPI.categorys;
-    const [isLogin, setIsLogin] = state.UserAPI.login;
+    const [orders, setOrders] = state.OrderAPI.orders;
+    const [isAdmin, setIsAdmin] = state.UserAPI.admin;
+
+    console.log(isAdmin);
 
     const [showAdd, setShowAdd] = useState(false);
     const [showView, setShowView] = useState(false);
@@ -33,8 +32,9 @@ function Order() {
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
 
+    const navigate = useNavigate();
     useEffect(() => {
-        if (!isLogin) {
+        if (!isAdmin) {
             navigate('/login');
         }
     }, []);
@@ -133,7 +133,7 @@ function Order() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {order.map((item, index) => (
+                                {orders.map((item, index) => (
                                     <tr className={cx('table-item')} key={index}>
                                         <td>
                                             <img src={item.image} alt="" className={cx('home-img')} />
