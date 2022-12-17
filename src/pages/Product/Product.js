@@ -24,8 +24,10 @@ const cx = classNames.bind(styles);
 
 function Product() {
     const state = useContext(GlobalState);
+    const [isAdmin, setIsAdmin] = state.UserAPI.admin;
     const [isLogin, setIsLogin] = state.UserAPI.login;
     const navigate = useNavigate();
+    console.log("Isadmin Product:", isAdmin)
 
     const categorys = state.CategoryAPI.categorys[0];
     const foodStores = state.FoodStoreAPI.foodStores[0];
@@ -43,14 +45,16 @@ function Product() {
     const [category, setCategory] = useState('');
     const [foodstore, setFoodStore] = useState('');
     const [image, setImage] = useState('');
+    const [status, setStatus] = useState('');
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
 
-    useEffect(() => {
-        if (!isLogin) {
-            navigate('/login');
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (!isLogin) {
+    //         navigate('/login');
+    //         return
+    //     }
+    // }, []);
 
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => {
@@ -73,6 +77,7 @@ function Product() {
         setCategory(e.target.getAttribute('data-category'));
         setFoodStore(e.target.getAttribute('data-foodstore'));
         setImage(e.target.getAttribute('data-image'));
+        setStatus(e.target.getAttribute('data-status'));
         setShowView(true);
     };
 
@@ -122,7 +127,11 @@ function Product() {
         setImage(e.target.files[0]);
     };
 
-    //Thêm dữ liệu vào firebase
+    const setStatusProduct = (e) => {
+        setStatus(e.target.value);
+    };
+
+    //Thêm dữ liệu
     const handleAddProduct = (e) => {
         e.preventDefault();
         const body = new FormData(e.target);
@@ -149,7 +158,7 @@ function Product() {
             });
     };
 
-    //Sửa dữ liệu firebase
+    //Sửa dữ liệu 
     const handleEditProduct = (e) => {
         postMethod('product/update', {
             id: idEdit,
@@ -157,11 +166,12 @@ function Product() {
             quantity: quantity,
             description: description,
             price: price,
+            status: status,
         })
             .then((res) => {
                 setShowEdit(false);
                 if (res.success) {
-                    setProducts([...products]);
+                    setProducts(res.products);
                     Swal.fire({
                         title: 'Success',
                         text: 'Update product successfully',
@@ -261,6 +271,7 @@ function Product() {
                                                 data-category={item.category}
                                                 data-foodstore={item.foodstore}
                                                 data-image={item.image_url}
+                                                data-status={item.status}
                                             >
                                                 Xem
                                             </Link>
@@ -318,6 +329,9 @@ function Product() {
                     </div>
                     <div className={cx('form-group')}>
                         <input className={cx('form-control')} value={foodstore} readOnly />
+                    </div>
+                    <div className={cx('form-group')}>
+                        <input className={cx('form-control')} value={status} readOnly />
                     </div>
                     <div className={cx('form-group')}>
                         <img src={image} alt="" className={cx('home-img')} />
@@ -496,6 +510,19 @@ function Product() {
                             required
                         />
                     </div>
+                    <div className={cx('form-group')}>
+                            <select
+                                className={cx('form-control')}
+                                name="category"
+                                onChange={setStatusProduct}
+                                value={status}
+                                required
+                            >
+                                <option value="">Choose</option>
+                                <option value="Still">Still</option>
+                                <option value="Sold">Sold</option>
+                            </select>
+                        </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseEdit}>

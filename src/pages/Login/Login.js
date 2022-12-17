@@ -26,6 +26,7 @@ function Login() {
     const { admin } = state.UserAPI;
     const [isLogin, setIsLogin] = login;
     const [isAdmin, setIsAdmin] = admin;
+
     console.log(user);
     const handleLogin = () => {
         postMethod('login', user)
@@ -38,7 +39,8 @@ function Login() {
                         setIsAdmin(true);
                         navigate('/');
                     } else {
-                        
+                        setIsLogin(true);
+                        // setIsAdmin(true);
                     }
                 } else {
                     Swal.fire({

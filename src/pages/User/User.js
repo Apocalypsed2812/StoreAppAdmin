@@ -33,11 +33,11 @@ function User() {
     const [idDelete, setIdDelete] = useState('');
 
     const navigate = useNavigate();
-    useEffect(() => {
-        if (!isAdmin) {
-            navigate('/login');
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (!isAdmin) {
+    //         navigate('/login');
+    //     }
+    // }, []);
 
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => {

@@ -34,11 +34,11 @@ function FoodStore() {
     const [idDelete, setIdDelete] = useState('');
 
     const navigate = useNavigate();
-    useEffect(() => {
-        if (!isAdmin) {
-            navigate('/login');
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (!isAdmin) {
+    //         navigate('/login');
+    //     }
+    // }, []);
 
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => {
@@ -126,7 +126,7 @@ function FoodStore() {
             .then((res) => {
                 setShowEdit(false);
                 if (res.success) {
-                    setFoodStores([...foodStores]);
+                    setFoodStores(res.foodStores);
                     Swal.fire({
                         title: 'Success',
                         text: 'Update foodStores successfully',

@@ -7,6 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import { useState, useEffect, useContext } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 
 import styles from './Order.module.scss';
 import { postMethod } from '~/utils/fetchData';
@@ -23,48 +24,60 @@ function Order() {
 
     const [showAdd, setShowAdd] = useState(false);
     const [showView, setShowView] = useState(false);
+    const [showViewDetail, setShowViewDetail] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [name, setName] = useState('');
-    const [username, setUsername] = useState('');
+    const [total, setTotal] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
+    const [product, setProduct] = useState([]);
+    const [status, setStatus] = useState('');
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
 
     const navigate = useNavigate();
-    useEffect(() => {
-        if (!isAdmin) {
-            navigate('/login');
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (!isAdmin) {
+    //         navigate('/login');
+    //     }
+    // }, []);
 
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => {
         setName('');
-        setUsername('');
+        setTotal('');
         setPhone('');
         setAddress('');
         setShowAdd(true);
     };
 
     const handleCloseView = () => setShowView(false);
+    const handleCloseViewDetail = () => setShowViewDetail(false);
     const handleCloseEdit = () => setShowEdit(false);
     const handleCloseDelete = () => setShowDelete(false);
 
     const handleShowView = (e) => {
         setName(e.target.getAttribute('data-name'));
-        setUsername(e.target.getAttribute('data-username'));
+        setTotal(e.target.getAttribute('data-total'));
         setPhone(e.target.getAttribute('data-phone'));
         setAddress(e.target.getAttribute('data-address'));
+        setStatus(e.target.getAttribute('data-status'));
+        setProduct(JSON.parse(e.target.getAttribute('data-product')))
         setShowView(true);
     };
 
+    const handleDetail = () => {
+        setShowViewDetail(true)
+    }
+
     const handleShowEdit = (e) => {
         setName(e.target.getAttribute('data-name'));
-        setUsername(e.target.getAttribute('data-username'));
+        setTotal(e.target.getAttribute('data-total'));
         setPhone(e.target.getAttribute('data-phone'));
         setAddress(e.target.getAttribute('data-address'));
+        setStatus(e.target.getAttribute('data-status'));
+        setProduct(JSON.parse(e.target.getAttribute('data-product')))
         setIdEdit(e.target.getAttribute('data-id'));
         setShowEdit(true);
     };
@@ -77,30 +90,57 @@ function Order() {
     };
 
     //Set dữ liệu cho input
-    const setNameShipper = (e) => {
+    const setNameOrder = (e) => {
         setName(e.target.value);
     };
 
-    const setPhoneShipper = (e) => {
+    const setPhoneOrder = (e) => {
         setPhone(e.target.value);
     };
 
-    const setAddressShipper = (e) => {
+    const setAddressOrder = (e) => {
         setAddress(e.target.value);
     };
 
-    const setUsernameShipper = (e) => {
-        setUsername(e.target.value);
+    const setTotalOrder = (e) => {
+        setTotal(e.target.value);
     };
 
-    //Thêm dữ liệu vào firebase
-    const handleAddShipper = () => {};
+    const setStatusOrder = (e) => {
+        setStatus(e.target.value);
+    };
 
-    //Sửa dữ liệu firebase
-    const handleEditShipper = (e) => {};
+    const handleEditOrder = () => {
+        postMethod('order/update', {
+            id: idEdit,
+            name: name,
+            phone: phone,
+            address: address,
+            total: total,
+            status: status,
+        })
+            .then((res) => {
+                setShowEdit(false);
+                if (res.success) {
+                    setOrders(res.orders);
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Update order successfully',
+                        icon: 'success',
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: res.message,
+                        icon: 'error',
+                    });
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
 
-    //Xóa dữ liệu firebase
-    const handleDeleteShipper = (e) => {};
 
     return (
         <>
@@ -125,31 +165,29 @@ function Order() {
                         <table className={cx('table')}>
                             <thead>
                                 <tr>
-                                    <td>Ảnh</td>
                                     <td>Tên</td>
-                                    <td>Giá</td>
-                                    <td>Số lượng</td>
+                                    <td>Số điện thoại</td>
+                                    <td>Tổng tiền</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 {orders.map((item, index) => (
                                     <tr className={cx('table-item')} key={index}>
-                                        <td>
-                                            <img src={item.image} alt="" className={cx('home-img')} />
-                                        </td>
                                         <td>{item.name}</td>
-                                        <td>{item.price}</td>
-                                        <td>{item.quantity}</td>
+                                        <td>{item.phone}</td>
+                                        <td>{item.total}</td>
                                         <td>
                                             <Link
                                                 to=""
                                                 className={cx('ml-8')}
                                                 onClick={handleShowView}
                                                 data-name={item.name}
-                                                data-price={item.price}
-                                                data-quantity={item.quantity}
-                                                data-category={item.category}
+                                                data-total={item.total}
+                                                data-phone={item.phone}
+                                                data-address={item.address}
+                                                data-status={item.status}
+                                                data-product={JSON.stringify(item.product)}
                                             >
                                                 Xem
                                             </Link>
@@ -157,13 +195,14 @@ function Order() {
                                             <Link
                                                 to=""
                                                 className={cx('ml-8')}
-                                                // onClick={handleShowEdit}
-                                                // data-id={item.id}
-                                                // data-name={item.name}
-                                                // data-price={item.price}
-                                                // data-quantity={item.quantity}
-                                                // data-category={item.category}
-                                                // data-image={item.image}
+                                                onClick={handleShowEdit}
+                                                data-id={item._id}
+                                                data-name={item.name}
+                                                data-total={item.total}
+                                                data-phone={item.phone}
+                                                data-address={item.address}
+                                                data-status={item.status}
+                                                data-product={JSON.stringify(item.product)}
                                             >
                                                 Sửa
                                             </Link>
@@ -185,9 +224,9 @@ function Order() {
                 </div>
             </div>
 
-            {/* <Modal show={showView} onHide={handleCloseView}>
+            <Modal show={showView} onHide={handleCloseView}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xem Món Ăn</Modal.Title>
+                    <Modal.Title>Xem Đơn Hàng</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
@@ -202,9 +241,9 @@ function Order() {
                     <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
-                            name="price"
+                            name="phone"
                             placeholder="Nhập giá món ăn"
-                            value={price}
+                            value={phone}
                             readOnly
                         />
                     </div>
@@ -213,7 +252,7 @@ function Order() {
                             className={cx('form-control')}
                             name="quantity"
                             placeholder="Nhập số lượng món ăn"
-                            value={quantity}
+                            value={total}
                             readOnly
                         />
                     </div>
@@ -222,7 +261,16 @@ function Order() {
                             className={cx('form-control')}
                             name="category"
                             placeholder="Nhập loại món ăn"
-                            value={category}
+                            value={address}
+                            readOnly
+                        />
+                    </div>
+                    <div className={cx('form-group')}>
+                        <input
+                            className={cx('form-control')}
+                            name="category"
+                            placeholder="Nhập loại món ăn"
+                            value={status}
                             readOnly
                         />
                     </div>
@@ -231,20 +279,48 @@ function Order() {
                     <Button variant="secondary" onClick={handleCloseView}>
                         Close
                     </Button>
+                    <Button variant="primary" onClick={handleDetail}>
+                        Detail
+                    </Button>
                 </Modal.Footer>
-            </Modal> */}
+            </Modal>
 
-            {/* <Modal show={showAdd} onHide={handleCloseAdd}>
+            <Modal show={showViewDetail} onHide={handleCloseViewDetail}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Thêm Món Ăn</Modal.Title>
+                    <Modal.Title>Xem Chi Tiết Đơn Hàng</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {product.map((item, index) => (
+                        <div key={index}>
+                            <div className={cx('form-group')}>
+                                <label>Sản phẩm thứ {index + 1}</label>
+                            </div>
+                            <div className={cx('form-group', 'mb-5')}>
+                                <img src={item.image_url} alt="" className={cx('home-img')} />
+                                <p>{item.name}</p>
+                                <p>{item.price}</p>
+                            </div>
+                        </div>
+                    ))}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseViewDetail}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showEdit} onHide={handleCloseEdit}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Sửa Đơn Hàng</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
                             name="name"
-                            placeholder="Nhập tên món ăn"
-                            onChange={setNameProduct}
+                            placeholder="Nhập tên danh mục"
+                            onChange={setNameOrder}
                             value={name}
                             required
                         />
@@ -252,58 +328,57 @@ function Order() {
                     <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
-                            name="price"
-                            placeholder="Nhập giá món ăn"
-                            onChange={setPriceProduct}
-                            value={price}
+                            name="name"
+                            placeholder="Nhập địa chỉ quán ăn"
+                            onChange={setPhoneOrder}
+                            value={phone}
                             required
                         />
                     </div>
                     <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
-                            name="quantity"
-                            placeholder="Nhập số lượng món ăn"
-                            onChange={setQuantityProduct}
-                            value={quantity}
+                            name="name"
+                            placeholder="Nhập địa chỉ quán ăn"
+                            onChange={setAddressOrder}
+                            value={address}
                             required
                         />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <select
-                            className={cx('form-control')}
-                            name="category"
-                            // placeholder="Nhập loại món ăn"
-                            onChange={setCategoryProduct}
-                            required
-                        >
-                            <option value="">Vui Lòng Chọn Loại Món Ăn</option>
-                            {categoryList.map((item, index) => (
-                                <option value={item.name} key={item.id}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
                     </div>
                     <div className={cx('form-group')}>
                         <input
-                            type="file"
                             className={cx('form-control')}
+                            name="name"
+                            placeholder="Nhập địa chỉ quán ăn"
+                            onChange={setTotalOrder}
+                            value={total}
                             required
-                            name="image"
-                            onChange={setImageProduct}
                         />
                     </div>
+                    <div className={cx('form-group')}>
+                            <select
+                                className={cx('form-control')}
+                                name="category"
+                                onChange={setStatusOrder}
+                                value={status}
+                                required
+                            >
+                                <option value="">Choose</option>
+                                <option value="Dang Giao">Đang Giao</option>
+                                <option value="Đã Giao">Đã Giao</option>
+                                <option value="Đã Hủy">Đã Hủy</option>
+                            </select>
+                        </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseAdd}>
+                    <Button variant="secondary" onClick={handleCloseEdit}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleAddProduct}>
-                        Add
+                    <Button variant="primary" onClick={handleEditOrder}>
+                        Update
                     </Button>
                 </Modal.Footer>
-            </Modal> */}
+            </Modal>
         </>
     );
 }

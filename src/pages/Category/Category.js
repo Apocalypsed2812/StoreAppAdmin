@@ -20,7 +20,7 @@ function Category() {
     const state = useContext(GlobalState);
     const navigate = useNavigate()
     const [category, setCategory] = state.CategoryAPI.categorys;
-    const [isLogin, setIsLogin] = state.UserAPI.login;
+    const [isAdmin, setIsAdmin] = state.UserAPI.admin;
 
     const [showAdd, setShowAdd] = useState(false);
     const [showView, setShowView] = useState(false);
@@ -31,11 +31,11 @@ function Category() {
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
 
-    useEffect(() => {
-        if (!isLogin) {
-            navigate('/login');
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (!isAdmin) {
+    //         navigate('/login');
+    //     }
+    // }, []);
 
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => {
@@ -109,7 +109,7 @@ function Category() {
             .then((res) => {
                 setShowEdit(false);
                 if (res.success) {
-                    setCategory([...category]);
+                    setCategory(res.categorys);
                     Swal.fire({
                         title: 'Success',
                         text: 'Update category successfully',
