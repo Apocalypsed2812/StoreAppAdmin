@@ -33,6 +33,7 @@ function Order() {
     const [address, setAddress] = useState('');
     const [product, setProduct] = useState([]);
     const [status, setStatus] = useState('');
+    const [date, setDate] = useState('');
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
 
@@ -63,6 +64,7 @@ function Order() {
         setPhone(e.target.getAttribute('data-phone'));
         setAddress(e.target.getAttribute('data-address'));
         setStatus(e.target.getAttribute('data-status'));
+        setDate(e.target.getAttribute('data-date'));
         setProduct(JSON.parse(e.target.getAttribute('data-product')))
         setShowView(true);
     };
@@ -187,6 +189,7 @@ function Order() {
                                                 data-phone={item.phone}
                                                 data-address={item.address}
                                                 data-status={item.status}
+                                                data-date={item.date}
                                                 data-product={JSON.stringify(item.product)}
                                             >
                                                 Xem
@@ -230,49 +233,22 @@ function Order() {
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="name"
-                            placeholder="Nhập tên món ăn"
-                            value={name}
-                            readOnly
-                        />
+                        <span>Tên khách hàng: <b>{name}</b></span>
                     </div>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="phone"
-                            placeholder="Nhập giá món ăn"
-                            value={phone}
-                            readOnly
-                        />
+                        <span>Số điện thoại: {phone}</span>
                     </div>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="quantity"
-                            placeholder="Nhập số lượng món ăn"
-                            value={total}
-                            readOnly
-                        />
+                        <span>Địa chỉ: {address}</span>
                     </div>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="category"
-                            placeholder="Nhập loại món ăn"
-                            value={address}
-                            readOnly
-                        />
+                        <span>Tổng tiền: <i>{total} VND</i></span>
                     </div>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="category"
-                            placeholder="Nhập loại món ăn"
-                            value={status}
-                            readOnly
-                        />
+                        <span>Ngày tạo: <i>{date}</i></span>
+                    </div>
+                    <div className={cx('form-group')}>
+                        <span>Trạng thái: <b>{status}</b></span>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

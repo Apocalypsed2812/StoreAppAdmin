@@ -19,7 +19,7 @@ function UserAPI() {
             }
         };
         if (localStorage.getItem(TOKEN_NAME)) checkUserIsLogin();
-    }, []);
+    }, [isLogin]);
     return {
         login: [isLogin, setIsLogin],
         admin: [isAdmin, setIsAdmin],

@@ -15,6 +15,8 @@ function Login() {
     const state = useContext(GlobalState);
 
     const [showPassword, setShowPassword] = useState(false);
+    const setUserLogin = state.UserAPI.user[1];
+
     const [user, setUser] = useState({ username: '', password: '' });
     const handleChangeInput = (e) => {
         setUser({
@@ -33,14 +35,15 @@ function Login() {
             .then((response) => {
                 console.log(response);
                 if (response.success) {
+                    setUserLogin(response.user)
                     localStorage.setItem(TOKEN_NAME, response.token);
                     if (response.user.role === 'admin') {
                         setIsLogin(true);
                         setIsAdmin(true);
-                        navigate('/');
+                        navigate('/admin');
                     } else {
                         setIsLogin(true);
-                        // setIsAdmin(true);
+                        navigate('/foodstore');
                     }
                 } else {
                     Swal.fire({

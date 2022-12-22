@@ -7,7 +7,6 @@ import {
     faRightFromBracket,
     faSearch,
     faStore,
-    faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
@@ -56,41 +55,41 @@ function Sidebar() {
                             <input type="search" placeholder="Search..." />
                         </li>
                         <li>
-                            <Link to="/admin/">
+                            <Link to="/foodstore">
                                 <FontAwesomeIcon icon={faHome} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Trang Chủ</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/admin/food">
+                            <Link to="/foodstore/food">
                                 <FontAwesomeIcon icon={faBowlFood} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Món Ăn</span>
                             </Link>
                         </li>
-                        <li>
-                            <Link to="/admin/category">
+                        {/* <li>
+                            <Link to="/category">
                                 <FontAwesomeIcon icon={faBars} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Danh mục</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/admin/order">
+                            <Link to="/order">
                                 <FontAwesomeIcon icon={faMoneyBill} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Đơn hàng</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/admin/foodstore">
+                            <Link to="/foodstore">
                                 <FontAwesomeIcon icon={faStore} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Quán Ăn</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/admin/user">
-                                <FontAwesomeIcon icon={faUser} className={cx('icon')} />
+                            <Link to="/user">
+                                <FontAwesomeIcon icon={faMoneyBill} className={cx('icon')} />
                                 <span className={cx('text', 'nav-text')}>Người dùng</span>
                             </Link>
-                        </li>
+                        </li> */}
                     </ul>
                 </div>
                 <div className={cx('bottom-content')}>

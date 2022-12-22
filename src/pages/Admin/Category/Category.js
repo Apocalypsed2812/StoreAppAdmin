@@ -237,16 +237,10 @@ function Category() {
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="name"
-                            placeholder="Nhập tên món ăn"
-                            value={name}
-                            readOnly
-                        />
+                        <img src={image} alt="" className={cx('category-img')} />
                     </div>
                     <div className={cx('form-group')}>
-                        <img src={image} alt="" className={cx('category-img')} />
+                        <span>Tên danh mục: <b>{name}</b></span>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

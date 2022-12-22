@@ -185,37 +185,17 @@ function User() {
                     <Modal.Title>Xem Người Dùng</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="name"
-                            value={username}
-                            readOnly
-                        />
+                <div className={cx('form-group')}>
+                        <span>Tên khách hàng: <b>{name}</b></span>
                     </div>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="price"
-                            value={name}
-                            readOnly
-                        />
+                        <span>Tên đăng nhập: {username}</span>
                     </div>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="quantity"
-                            value={phone}
-                            readOnly
-                        />
+                        <span>Số điện thoại: {phone}</span>
                     </div>
                     <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="category"
-                            value={email}
-                            readOnly
-                        />
+                        <span>Email: <i>{email}</i></span>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

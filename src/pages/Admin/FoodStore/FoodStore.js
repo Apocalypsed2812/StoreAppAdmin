@@ -1,66 +1,51 @@
-import {
-    faBowlFood,
-    faBowlRice,
-    faSearch,
-} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faStore } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useState, useEffect, useContext } from 'react';
-// import { ToastContainer, toast } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 
-import { storage } from '~/firebase.js';
-import styles from './Product.module.scss';
+import styles from './FoodStore.module.scss';
 import { postMethod } from '~/utils/fetchData';
 import { GlobalState } from '~/context/GlobalState';
-// import app from '~/firebase.js';
-// import UploadImage from '~/utils/uploadImage';
 
 const cx = classNames.bind(styles);
 
-function Product() {
+function FoodStore() {
     const state = useContext(GlobalState);
+    const [foodStores, setFoodStores] = state.FoodStoreAPI.foodStores;
     const [isAdmin, setIsAdmin] = state.UserAPI.admin;
-    const [isLogin, setIsLogin] = state.UserAPI.login;
-    const navigate = useNavigate();
-    console.log("Isadmin Product:", isAdmin)
 
-    const categorys = state.CategoryAPI.categorys[0];
-    const foodStores = state.FoodStoreAPI.foodStores[0];
-    const [products, setProducts] = state.ProductAPI.products;
+    console.log(isAdmin);
 
     const [showAdd, setShowAdd] = useState(false);
     const [showView, setShowView] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
 
+    const [foodStore, setFoodStore] = useState([]);
     const [name, setName] = useState('');
-    const [quantity, setQuantity] = useState('');
-    const [price, setPrice] = useState('');
+    const [username, setUsername] = useState('');
+    const [address, setAddress] = useState('');
     const [description, setDescription] = useState('');
-    const [category, setCategory] = useState('');
-    const [foodstore, setFoodStore] = useState('');
     const [image, setImage] = useState('');
-    const [status, setStatus] = useState('');
     const [idEdit, setIdEdit] = useState('');
     const [idDelete, setIdDelete] = useState('');
 
+    const navigate = useNavigate();
     // useEffect(() => {
-    //     if (!isLogin) {
+    //     if (!isAdmin) {
     //         navigate('/login');
-    //         return
     //     }
     // }, []);
 
     const handleCloseAdd = () => setShowAdd(false);
     const handleShowAdd = () => {
         setName('');
-        setQuantity('');
-        setPrice('');
+        setUsername('');
+        setAddress('');
         setDescription('');
         setShowAdd(true);
     };
@@ -71,20 +56,16 @@ function Product() {
 
     const handleShowView = (e) => {
         setName(e.target.getAttribute('data-name'));
-        setPrice(e.target.getAttribute('data-price'));
-        setQuantity(e.target.getAttribute('data-quantity'));
+        setUsername(e.target.getAttribute('data-username'));
+        setAddress(e.target.getAttribute('data-address'));
         setDescription(e.target.getAttribute('data-description'));
-        setCategory(e.target.getAttribute('data-category'));
-        setFoodStore(e.target.getAttribute('data-foodstore'));
         setImage(e.target.getAttribute('data-image'));
-        setStatus(e.target.getAttribute('data-status'));
         setShowView(true);
     };
 
     const handleShowEdit = (e) => {
         setName(e.target.getAttribute('data-name'));
-        setPrice(e.target.getAttribute('data-price'));
-        setQuantity(e.target.getAttribute('data-quantity'));
+        setAddress(e.target.getAttribute('data-address'));
         setDescription(e.target.getAttribute('data-description'));
         setIdEdit(e.target.getAttribute('data-id'));
         setShowEdit(true);
@@ -99,50 +80,38 @@ function Product() {
     };
 
     //Set dữ liệu cho input
-    const setNameProduct = (e) => {
+    const setNameFoodStore = (e) => {
         setName(e.target.value);
     };
 
-    const setQuantityProduct = (e) => {
-        setQuantity(e.target.value);
+    const setUsernameFoodStore = (e) => {
+        setUsername(e.target.value)
+    }
+
+    const setAddressFoodStore = (e) => {
+        setAddress(e.target.value);
     };
 
-    const setPriceProduct = (e) => {
-        setPrice(e.target.value);
-    };
-
-    const setDescriptionProduct = (e) => {
+    const setDescriptionFoodstore = (e) => {
         setDescription(e.target.value);
     };
 
-    const setCategoryProduct = (e) => {
-        setCategory(e.target.value);
-    };
-
-    const setFoodStoreProduct = (e) => {
-        setFoodStore(e.target.value);
-    };
-
-    const setImageProduct = (e) => {
+    const setImageFoodstore = (e) => {
         setImage(e.target.files[0]);
     };
 
-    const setStatusProduct = (e) => {
-        setStatus(e.target.value);
-    };
-
-    //Thêm dữ liệu
-    const handleAddProduct = (e) => {
+    //Thêm dữ liệu vào firebase
+    const handleAddFoodStore = (e) => {
         e.preventDefault();
         const body = new FormData(e.target);
-        postMethod('product/add', body)
+        postMethod('foodstore/add', body)
             .then((res) => {
                 setShowAdd(false);
                 if (res.success) {
-                    setProducts([...products, res.product]);
+                    setFoodStores([...foodStores, res.foodStore]);
                     Swal.fire({
                         title: 'Success',
-                        text: 'Add product successfully',
+                        text: 'Add foodstore successfully',
                         icon: 'success',
                     });
                 } else {
@@ -158,23 +127,16 @@ function Product() {
             });
     };
 
-    //Sửa dữ liệu 
-    const handleEditProduct = (e) => {
-        postMethod('product/update', {
-            id: idEdit,
-            name: name,
-            quantity: quantity,
-            description: description,
-            price: price,
-            status: status,
-        })
+    //Sửa dữ liệu firebase
+    const handleEditFoodStore = (e) => {
+        postMethod('foodstore/update', { id: idEdit, name: name, address: address, description: description })
             .then((res) => {
                 setShowEdit(false);
                 if (res.success) {
-                    setProducts(res.products);
+                    setFoodStores(res.foodStores);
                     Swal.fire({
                         title: 'Success',
-                        text: 'Update product successfully',
+                        text: 'Update foodStores successfully',
                         icon: 'success',
                     });
                 } else {
@@ -191,15 +153,15 @@ function Product() {
     };
 
     //Xóa dữ liệu firebase
-    const handleDeleteProduct = (e) => {
-        postMethod('product/delete', { id: idDelete })
+    const handleDeleteFoodStore = (e) => {
+        postMethod('foodstore/delete', { foodstore_id: idDelete })
             .then((res) => {
                 setShowDelete(false);
                 if (res.success) {
-                    setProducts([...products]);
+                    setFoodStores(res.foodStores);
                     Swal.fire({
                         title: 'Success',
-                        text: 'Delete product successfully',
+                        text: 'Delete foodstore suceessfully',
                         icon: 'success',
                     });
                 } else {
@@ -214,14 +176,13 @@ function Product() {
                 console.log(err);
             });
     };
-
     return (
         <>
             <div className={cx('dashboard')}>
                 <div className={cx('top')}>
                     <div>
-                        <FontAwesomeIcon icon={faBowlFood} className={cx('icon', 'mr-8')} />
-                        <span>Food</span>
+                        <FontAwesomeIcon icon={faStore} className={cx('icon', 'mr-8')} />
+                        <span>FoodStore</span>
                     </div>
                     <div className={cx('dashboard-search-box')}>
                         <FontAwesomeIcon icon={faSearch} className={cx('icon')} />
@@ -232,12 +193,12 @@ function Product() {
                 <div className={cx('dash-content')}>
                     <div className={cx('activity')}>
                         <div className={cx('title')}>
-                            <FontAwesomeIcon icon={faBowlRice} className={cx('icon', 'mt-16')} />
-                            <span className={cx('text', 'mt-16')}>Manage Food</span>
+                            <FontAwesomeIcon icon={faStore} className={cx('icon', 'mt-16')} />
+                            <span className={cx('text', 'mt-16')}>Manage FoodStore</span>
                         </div>
                         <div>
                             <button className={cx('btn-add')} onClick={handleShowAdd}>
-                                Thêm Món Ăn +
+                                Thêm Quán Ăn +
                             </button>
                         </div>
                         <table className={cx('table')}>
@@ -245,33 +206,28 @@ function Product() {
                                 <tr>
                                     <td>Ảnh</td>
                                     <td>Tên</td>
-                                    <td>Giá</td>
-                                    <td>Số lượng</td>
+                                    <td>Địa chỉ</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
                             <tbody>
-                                {products.map((item, index) => (
+                                {foodStores.map((item, index) => (
                                     <tr className={cx('table-item')} key={index}>
                                         <td>
                                             <img src={item.image_url} alt="" className={cx('home-img')} />
                                         </td>
                                         <td>{item.name}</td>
-                                        <td>{item.price}</td>
-                                        <td>{item.quantity}</td>
+                                        <td>{item.address}</td>
                                         <td>
                                             <Link
                                                 to=""
                                                 className={cx('ml-8')}
                                                 onClick={handleShowView}
                                                 data-name={item.name}
-                                                data-price={item.price}
-                                                data-quantity={item.quantity}
+                                                data-username={item.username}
+                                                data-address={item.address}
                                                 data-description={item.description}
-                                                data-category={item.category}
-                                                data-foodstore={item.foodstore}
                                                 data-image={item.image_url}
-                                                data-status={item.status}
                                             >
                                                 Xem
                                             </Link>
@@ -282,10 +238,8 @@ function Product() {
                                                 onClick={handleShowEdit}
                                                 data-id={item._id}
                                                 data-name={item.name}
-                                                data-price={item.price}
-                                                data-quantity={item.quantity}
+                                                data-address={item.address}
                                                 data-description={item.description}
-                                                data-image={item.image_url}
                                             >
                                                 Sửa
                                             </Link>
@@ -309,32 +263,23 @@ function Product() {
 
             <Modal show={showView} onHide={handleCloseView}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xem Món Ăn</Modal.Title>
+                    <Modal.Title>Xem Quán Ăn</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
-                        <input className={cx('form-control')} value={name} readOnly />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input className={cx('form-control')} value={quantity} readOnly />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input className={cx('form-control')} value={price} readOnly />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input className={cx('form-control')} value={description} readOnly />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input className={cx('form-control')} value={category} readOnly />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input className={cx('form-control')} value={foodstore} readOnly />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input className={cx('form-control')} value={status} readOnly />
-                    </div>
-                    <div className={cx('form-group')}>
                         <img src={image} alt="" className={cx('home-img')} />
+                    </div>
+                    <div className={cx('form-group')}>
+                        <span>Tên đăng nhập: <b>{username}</b></span>
+                    </div>
+                    <div className={cx('form-group')}>
+                        <span>Tên quán: <i>{name}</i></span>
+                    </div>
+                    <div className={cx('form-group')}>
+                        <span>Địa chỉ: {address}</span>
+                    </div>
+                    <div className={cx('form-group')}>
+                        <span>Mô tả: {description}</span>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
@@ -346,16 +291,16 @@ function Product() {
 
             <Modal show={showAdd} onHide={handleCloseAdd}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Thêm Món Ăn</Modal.Title>
+                    <Modal.Title>Thêm Quán Ăn</Modal.Title>
                 </Modal.Header>
-                <form onSubmit={handleAddProduct}>
+                <form onSubmit={handleAddFoodStore}>
                     <Modal.Body>
                         <div className={cx('form-group')}>
                             <input
                                 className={cx('form-control')}
                                 name="name"
-                                placeholder="Nhập tên món ăn"
-                                onChange={setNameProduct}
+                                placeholder="Nhập tên quán ăn"
+                                onChange={setNameFoodStore}
                                 value={name}
                                 required
                             />
@@ -363,21 +308,20 @@ function Product() {
                         <div className={cx('form-group')}>
                             <input
                                 className={cx('form-control')}
-                                name="quantity"
-                                placeholder="Nhập số lượng món ăn"
-                                onChange={setQuantityProduct}
-                                value={quantity}
+                                name="username"
+                                placeholder="Nhập tên đăng nhập quán ăn"
+                                onChange={setUsernameFoodStore}
+                                value={username}
                                 required
                             />
                         </div>
                         <div className={cx('form-group')}>
                             <input
                                 className={cx('form-control')}
-                                name="price"
-                                type="Number"
-                                placeholder="Nhập giá món ăn"
-                                onChange={setPriceProduct}
-                                value={price}
+                                name="address"
+                                placeholder="Nhập địa chỉ quán ăn"
+                                onChange={setAddressFoodStore}
+                                value={address}
                                 required
                             />
                         </div>
@@ -385,50 +329,18 @@ function Product() {
                             <input
                                 className={cx('form-control')}
                                 name="description"
-                                placeholder="Nhập mô tả món ăn"
-                                onChange={setDescriptionProduct}
+                                placeholder="Nhập mô tả quán ăn"
+                                onChange={setDescriptionFoodstore}
                                 value={description}
                                 required
                             />
-                        </div>
-                        <div className={cx('form-group')}>
-                            <select
-                                className={cx('form-control')}
-                                name="category"
-                                onChange={setCategoryProduct}
-                                value={category}
-                                required
-                            >
-                                <option value="">Choose</option>
-                                {categorys.map((item, index) => (
-                                    <option value={item.name} key={index}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className={cx('form-group')}>
-                            <select
-                                className={cx('form-control')}
-                                name="foodstore"
-                                onChange={setFoodStoreProduct}
-                                value={foodstore}
-                                required
-                            >
-                                <option value="">Choose</option>
-                                {foodStores.map((item, index) => (
-                                    <option value={item.name} key={index}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
                         </div>
                         <div className={cx('form-group')}>
                             <input
                                 className={cx('form-control')}
                                 type="file"
                                 name="image"
-                                onChange={(e) => setImageProduct(e)}
+                                onChange={(e) => setImageFoodstore(e)}
                                 required
                             />
                         </div>
@@ -446,12 +358,12 @@ function Product() {
 
             <Modal show={showDelete} onHide={handleCloseDelete}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xóa Món Ăn</Modal.Title>
+                    <Modal.Title>Xóa Quán Ăn</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
                         <p className={cx('form-control')}>
-                            Bạn có chắc là muốn xóa món ăn <b>{name}</b> không ?
+                            Bạn có chắc là muốn xóa quán ăn <b>{name}</b> không ?
                         </p>
                     </div>
                 </Modal.Body>
@@ -459,7 +371,7 @@ function Product() {
                     <Button variant="secondary" onClick={handleCloseDelete}>
                         Close
                     </Button>
-                    <Button variant="danger" onClick={handleDeleteProduct}>
+                    <Button variant="danger" onClick={handleDeleteFoodStore}>
                         Delete
                     </Button>
                 </Modal.Footer>
@@ -467,7 +379,7 @@ function Product() {
 
             <Modal show={showEdit} onHide={handleCloseEdit}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Sửa Món Ăn</Modal.Title>
+                    <Modal.Title>Sửa Quán Ăn</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className={cx('form-group')}>
@@ -475,7 +387,7 @@ function Product() {
                             className={cx('form-control')}
                             name="name"
                             placeholder="Nhập tên danh mục"
-                            onChange={setNameProduct}
+                            onChange={setNameFoodStore}
                             value={name}
                             required
                         />
@@ -485,18 +397,8 @@ function Product() {
                             className={cx('form-control')}
                             name="name"
                             placeholder="Nhập địa chỉ quán ăn"
-                            onChange={setQuantityProduct}
-                            value={quantity}
-                            required
-                        />
-                    </div>
-                    <div className={cx('form-group')}>
-                        <input
-                            className={cx('form-control')}
-                            name="name"
-                            placeholder="Nhập địa chỉ quán ăn"
-                            onChange={setPriceProduct}
-                            value={price}
+                            onChange={setAddressFoodStore}
+                            value={address}
                             required
                         />
                     </div>
@@ -505,30 +407,17 @@ function Product() {
                             className={cx('form-control')}
                             name="name"
                             placeholder="Nhập tên quán ăn"
-                            onChange={setDescriptionProduct}
+                            onChange={setDescriptionFoodstore}
                             value={description}
                             required
                         />
                     </div>
-                    <div className={cx('form-group')}>
-                            <select
-                                className={cx('form-control')}
-                                name="category"
-                                onChange={setStatusProduct}
-                                value={status}
-                                required
-                            >
-                                <option value="">Choose</option>
-                                <option value="Still">Still</option>
-                                <option value="Sold">Sold</option>
-                            </select>
-                        </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseEdit}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleEditProduct}>
+                    <Button variant="primary" onClick={handleEditFoodStore}>
                         Update
                     </Button>
                 </Modal.Footer>
@@ -537,4 +426,4 @@ function Product() {
     );
 }
 
-export default Product;
+export default FoodStore;

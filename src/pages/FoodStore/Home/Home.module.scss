@@ -76,13 +76,13 @@
 }
 
 .dashboard .dash-content {
-    padding-top: 80px;
+    padding-top: 100px;
 }
 
 .dash-content .title {
     display: flex;
     align-items: center;
-    margin: 0 0 30px 0;
+    margin: 30px 0 30px 0;
 }
 
 .dash-content .title i {
@@ -101,6 +101,42 @@
     font-weight: 500;
     color: var(--text-color);
     margin-left: 10px;
+}
+
+.dash-content .boxes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.dash-content .boxes .box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 12px;
+    width: calc(100% / 3 - 15px);
+    padding: 15px 20px;
+    background-color: var(--white-color);
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.box i {
+    font-size: 35px;
+    color: var(--text-color-box);
+}
+
+.box .text {
+    white-space: nowrap;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-color-box);
+}
+
+.box .number {
+    font-size: 40px;
+    font-weight: 500;
+    color: var(--text-color-box);
 }
 
 .dash-content .activity {
