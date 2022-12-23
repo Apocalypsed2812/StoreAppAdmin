@@ -401,14 +401,16 @@ function Product() {
                             />
                         </div>
                         <div className={cx('form-group')}>
-                            <input
+                            <textarea
                                 className={cx('form-control')}
                                 name="description"
                                 placeholder="Nhập mô tả món ăn"
                                 onChange={setDescriptionProduct}
-                                value={description}
                                 required
-                            />
+                                rows={5}
+                            >
+                            {description}
+                            </textarea>
                         </div>
                         <div className={cx('form-group')}>
                             <select
@@ -520,6 +522,18 @@ function Product() {
                         />
                     </div>
                     <div className={cx('form-group')}>
+                        <textarea
+                            className={cx('form-control')}
+                            name="description"
+                            placeholder="Nhập mô tả món ăn"
+                            onChange={setDescriptionProduct}
+                            required
+                            rows={5}
+                        >
+                        {description}
+                        </textarea>
+                    </div>
+                    {/* <div className={cx('form-group')}>
                         <input
                             className={cx('form-control')}
                             name="name"
@@ -528,7 +542,7 @@ function Product() {
                             value={description}
                             required
                         />
-                    </div>
+                    </div> */}
                     <div className={cx('form-group')}>
                             <select
                                 className={cx('form-control')}

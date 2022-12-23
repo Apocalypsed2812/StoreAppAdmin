@@ -16,6 +16,7 @@ import { useContext } from 'react';
 
 import { GlobalState } from '~/context/GlobalState';
 import styles from './Sidebar.module.scss';
+import logo from '~/assets/images/logo_mobile.jpg'
 
 const cx = classNames.bind(styles);
 
@@ -36,12 +37,12 @@ function Sidebar() {
             <header>
                 <div className={cx('image-text')}>
                     <span className={cx('image')}>
-                        <img src="" alt="logo" />
+                        <img src={logo} alt="logo" />
                     </span>
 
                     <div className={cx('text', 'header-text')}>
                         <span className={cx('name')}>FoodShop</span>
-                        <span className={cx('profession')}>Order Food</span>
+                        <span className={cx('profession')}>51900444 - 51900333</span>
                     </div>
                 </div>
 

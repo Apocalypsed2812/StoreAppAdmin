@@ -150,7 +150,7 @@ function User() {
                                                 Xem
                                             </Link>
 
-                                            <Link
+                                            {/* <Link
                                                 to=""
                                                 className={cx('ml-8')}
                                                 // onClick={handleShowEdit}
@@ -170,7 +170,7 @@ function User() {
                                                 // data-name={item.name}
                                             >
                                                 Xóa
-                                            </Link>
+                                            </Link> */}
                                         </td>
                                     </tr>
                                 ))}

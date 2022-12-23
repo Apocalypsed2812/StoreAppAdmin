@@ -92,11 +92,11 @@ function FoodStore() {
         setAddress(e.target.value);
     };
 
-    const setDescriptionFoodstore = (e) => {
+    const setDescriptionFoodStore = (e) => {
         setDescription(e.target.value);
     };
 
-    const setImageFoodstore = (e) => {
+    const setImageFoodStore = (e) => {
         setImage(e.target.files[0]);
     };
 
@@ -326,21 +326,23 @@ function FoodStore() {
                             />
                         </div>
                         <div className={cx('form-group')}>
-                            <input
+                            <textarea
                                 className={cx('form-control')}
                                 name="description"
-                                placeholder="Nhập mô tả quán ăn"
-                                onChange={setDescriptionFoodstore}
-                                value={description}
+                                placeholder="Nhập mô tả món ăn"
+                                onChange={setDescriptionFoodStore}
                                 required
-                            />
+                                rows={5}
+                            >
+                            {description}
+                            </textarea>
                         </div>
                         <div className={cx('form-group')}>
                             <input
                                 className={cx('form-control')}
                                 type="file"
                                 name="image"
-                                onChange={(e) => setImageFoodstore(e)}
+                                onChange={(e) => setImageFoodStore(e)}
                                 required
                             />
                         </div>
@@ -403,14 +405,17 @@ function FoodStore() {
                         />
                     </div>
                     <div className={cx('form-group')}>
-                        <input
+                        <textarea
                             className={cx('form-control')}
-                            name="name"
-                            placeholder="Nhập tên quán ăn"
-                            onChange={setDescriptionFoodstore}
-                            value={description}
+                            name="description"
+                            placeholder="Nhập mô tả quán ăn"
+                            onChange={setDescriptionFoodStore}
                             required
-                        />
+                            // cols={20}
+                            rows={5}
+                        >
+                        {description}
+                        </textarea>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

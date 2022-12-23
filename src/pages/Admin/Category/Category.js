@@ -134,7 +134,7 @@ function Category() {
             .then((res) => {
                 setShowDelete(false);
                 if (res.success) {
-                    setCategory([...category]);
+                    setCategory(res.categorys);
                     Swal.fire({
                         title: 'Success',
                         text: 'Delete category suceessfully',

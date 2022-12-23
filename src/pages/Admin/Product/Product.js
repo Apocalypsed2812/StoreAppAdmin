@@ -235,11 +235,11 @@ function Product() {
                             <FontAwesomeIcon icon={faBowlRice} className={cx('icon', 'mt-16')} />
                             <span className={cx('text', 'mt-16')}>Manage Food</span>
                         </div>
-                        <div>
+                        {/* <div>
                             <button className={cx('btn-add')} onClick={handleShowAdd}>
                                 Thêm Món Ăn +
                             </button>
-                        </div>
+                        </div> */}
                         <table className={cx('table')}>
                             <thead>
                                 <tr>
