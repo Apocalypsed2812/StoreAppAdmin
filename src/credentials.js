@@ -4,4 +4,5 @@ export const TOKEN_NAME = 'token_user_vt_ecommerce_name';
 //export const SERVER_API = 'http://localhost:5000/api/';
 
 // export const SERVER_API = 'https://food-shop-api.herokuapp.com/api/';
-export const SERVER_API = 'https://food-app-api.vercel.app/api/';
+// export const SERVER_API = 'https://food-app-api.vercel.app/api/';
+export const SERVER_API = 'https://foodappnodeapi.onrender.com/api/';
